@@ -1,1 +1,116 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+
+<title>Private Media Viewer</title>
+
+<style>
+
+body{
+background:#111;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+#login{
+margin-top:120px;
+}
+
+.gallery{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+img,video{
+width:300px;
+margin:10px;
+border-radius:10px;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="login">
+
+<h2>Enter Password</h2>
+
+<input type="password" id="password">
+
+<button onclick="login()">Enter</button>
+
+</div>
+
+<div id="content" style="display:none">
+
+<h1>Media Library</h1>
+
+<div id="gallery" class="gallery"></div>
+
+</div>
+
+<script>
+
+const username="ISHANTDEADPOOL"
+const repo="media-storage"
+
+async function login(){
+
+let input=document.getElementById("password").value
+
+let res=await fetch(
+`https://raw.githubusercontent.com/${username}/${repo}/main/config/settings.json`
+)
+
+let settings=await res.json()
+
+if(input===settings.viewerPassword){
+
+document.getElementById("login").style.display="none"
+
+document.getElementById("content").style.display="block"
+
+loadMedia()
+
+}else{
+
+alert("Wrong password")
+
+}
+
+}
+
+async function loadMedia(){
+
+let res=await fetch(
+`https://api.github.com/repos/${username}/${repo}/contents/media/photos`
+)
+
+let files=await res.json()
+
+files.forEach(file=>{
+
+let img=document.createElement("img")
+
+img.src=file.download_url
+
+document.getElementById("gallery").appendChild(img)
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
